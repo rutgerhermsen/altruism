@@ -49,6 +49,7 @@ program altruism_default_1D
 
     ! update density etc. of current ("old") state
     call update_quantities()
+    
     ! perform collective-level analysis, at certain times
     call consider_collective_analysis(field, o_list, o_stats, t)
 
@@ -143,7 +144,10 @@ contains
 
   ! S_curves are calculated only at certain times
   subroutine consider_S_curve()
-    if (t >=  (T_MAX - NR_AV) .and. modulo(T_MAX - t - 1, SC_IN) == 0) then
+    if (&
+    & NR_AV > 0 .and. t >=  (T_MAX - NR_AV) .and. &
+    & (modulo(T_MAX - t - 1, SC_IN) == 0) &
+    & ) then
       print *, "# Start calculating an S-curve at time", t
       call update_w_field()
       call compute_S_curve(field(py), o_stats(py))
@@ -362,7 +366,9 @@ contains
       write(13, "(*(g0))") "# organisms at timestep ", t, ", time ", real(t, kind = DP)*DT
       write(13, "(g0)") "position, grid-point, phenotype, relative fitness"
       do i=1,o_stats(py)%n
-        write(13, "(*(g0))") real(o_list(i, py)%x, kind = DP)/RESOLUTION, ', ', i, ', ', o_list(i, py)%p, ', ', &
+        write(13, "(*(g0))") real(o_list(i, py)%x, kind = DP)/RESOLUTION, ', ', &
+        & o_list(i, py)%x, ', ', &
+        & o_list(i, py)%p, ', ', &
         & o_list(i, py)%w
       end do
       close(unit=13)
@@ -459,7 +465,7 @@ contains
       do j=0, HALF_N
         if (distances(j) > 0) then
           write(13, "(*(g0))") real(j, kind = DP)/RESOLUTION, ', ', &
-          & real(g_of_r(j), kind = DP)/real(distances(j), kind = DP)
+          & g_of_r(j)/real(distances(j), kind = DP)
         end if
       end do
       close(unit=13)
@@ -525,7 +531,7 @@ contains
       fieldA(pyL)%occ(o_listA(o, pyL)%x) = &
       & fieldA(pyL)%occ(o_listA(o, pyL)%x) + 1
       fieldA(pyL)%p(o_listA(o, pyL)%x) = &
-      & fieldA(pyL)%p(o_listA(o, pyL)%x) + (o_listA(o, pyL)%p)
+      & fieldA(pyL)%p(o_listA(o, pyL)%x) + o_listA(o, pyL)%p
     end do
 
     print *, "Done."

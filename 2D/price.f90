@@ -7,17 +7,21 @@ module price
 
   implicit none
 
-  real(DP) :: S, S_pur, S_pur_alt, S_mean = 0d0
-  real(DP) :: S_vals(NR_SC) = 0d0             ! values of S at various times
-  real(DP) :: S_r_mean(MEAN_INTERVAL) = 0d0
-  real(DP) :: S_pur_r_mean(MEAN_INTERVAL) = 0d0
-  real(DP) :: S_cum = 0d0, S_pur_cum = 0d0    ! cumulative effect of S
-  real(DP) :: transmission = 0d0, transmission_r_mean(MEAN_INTERVAL) = 0d0
-  real(DP) :: transmission_cum = 0d0          ! cumulative effect of transmission
+  real(DP) :: S = 0d0                ! directional selection
+  real(DP) :: S_pur, S_pur_alt = 0d0 ! purifying selection
+  real(DP) :: S_mean = 0d0           ! mean of selection
+  real(DP) :: S_vals(NR_SC) = 0d0    ! values of S at various times
+  real(DP) :: S_r_mean(MEAN_INTERVAL) = 0d0      ! rolling mean of S
+  real(DP) :: S_pur_r_mean(MEAN_INTERVAL) = 0d0  ! rolling mean purifying selection
+  real(DP) :: S_cum = 0d0, S_pur_cum = 0d0       ! cumulative effect of S and purif. S.
+  real(DP) :: transmission = 0d0     ! transmission
+  real(DP) :: transmission_r_mean(MEAN_INTERVAL) = 0d0 ! rolling mean of transmission
+  real(DP) :: transmission_cum = 0d0 ! cumulative effect of transmission
   real(DP) :: drift = 0d0
-  real(DP) :: drift_cum = 0d0                 ! cumulative effect of drift
+  real(DP) :: drift_cum = 0d0        ! cumulative effect of drift
 
 contains
+
 
   subroutine calculate_price(t)
     integer, intent(in) :: t
@@ -25,6 +29,7 @@ contains
     call update_selection(t)
     call calculate_transmission(t)
     call calculate_drift()
+
   end subroutine calculate_price
 
   subroutine update_selection(t)
@@ -56,6 +61,7 @@ contains
     & o_stats(py)%n &
     & )
 
+
     S_pur_alt = S_pur - S**2d0
 
     S_pur_r_mean(modulo(t - 1, MEAN_INTERVAL) + 1) = S_pur
@@ -74,9 +80,8 @@ contains
   subroutine update_w_list()
 
     o_list(1:o_stats(py)%n, py)%W_abs = (1d0 - P_D)*(o_list(1:o_stats(py)%n, py)%gr + 1d0)
-    !    w_list(1:n(py)) = w_list(1:n(py))*dble(n(py))/pSum(w_list(1:n(py)))
     o_list(1:o_stats(py)%n, py)%w = o_list(1:o_stats(py)%n, py)%W_abs*&
-    & real(o_stats(py)%n, kind = DP)/pSum(real(o_list(1:o_stats(py)%n, py)%offspring, kind = DP))
+    &real(o_stats(py)%n, kind = DP)/pSum(real(o_list(1:o_stats(py)%n, py)%offspring, kind = DP))
   end subroutine
 
   subroutine calculate_transmission(t)
@@ -95,6 +100,7 @@ contains
     mismatch(1:o_stats(py)%n) = real(o_list(1:o_stats(py)%n, py)%offspring, kind = DP) &
     & - (1d0 - P_D)*(o_list(1:o_stats(py)%n, py)%gr)
     mean_mismatch = pSum(mismatch)/real(o_stats(py)%n, kind = DP)
+    ! note that we have omitted a constant, which below would be subtracted anyway.
 
     drift = simple_covariance( &
     & mismatch(1:o_stats(py)%n) - mean_mismatch, & ! subtract the mean for stability
@@ -102,7 +108,7 @@ contains
     & o_stats(py)%n &
     & ) * real(o_stats(py)%n, kind = DP)/pSum(real(o_list(1:o_stats(py)%n, py)%offspring, kind = DP))
 
-    drift_cum = drift_cum  + drift
+    drift_cum = drift_cum + drift
 
   end subroutine calculate_drift
 

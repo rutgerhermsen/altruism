@@ -12,7 +12,7 @@ module data_structures
   type org
     sequence
     integer :: x = 0 ! x coordinate
-    real(DP) :: p = 0d0! phenotype
+    real(DP) :: p = 0d0! phenotype (level of altruism)
     real(DP) :: p_e = 0d0 ! effective phenotype -- equals p unless p is negative
     real(DP) :: gr = 0d0  ! growth rate of each organism
     integer :: offspring = 0 ! realized absolute fitness
@@ -56,6 +56,7 @@ module data_structures
     complex(DP) :: contrib_Slocal(N) = 0d0  ! contribution to selection at some scale
   end type fld
 
+  ! some population statistics
   type org_sts
     integer :: n = 0            ! total population size
     real(DP) :: mean_w = 0d0          ! population mean of relative fitness (1 by definition!)

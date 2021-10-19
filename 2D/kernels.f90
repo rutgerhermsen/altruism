@@ -5,12 +5,10 @@ module kernels
   use pairwise
 
   implicit none
-
-  complex(DP) :: fft_kernel(N) = 0d0              ! FFT of competition kernel
-  complex(DP) :: fft_kernelAltr(N) = 0d0          ! FFT of altruism kernel
-  complex(DP) :: fft_kernelLSD(N) = 0d0           ! FFT of kernel used for visualizing Kernel Selection Differential
-  complex(DP) :: fft_smooth_kernel(N) = 0d0       ! FFT of kernel used for visualizing smoothed density
-  complex(DP) :: fft_kernels(N, NR_SCALES) = 0d0  ! FFT used for calculation of S_local and S_interlocal
+  complex(DP) :: fft_kernel(N,N) = 0   ! FFT of competition kernel
+  complex(DP) :: fft_kernels(N, N, NR_SCALES) = 0d0 ! FFT used for calculation of S_local and S_interlocal
+  complex(DP) :: fft_kernelAltr(N,N) = 0 ! FFT of altruism kernel
+  complex(DP) :: fft_kernelLSD(N,N) = 0 ! FFT of kernel used for visualizing Kernel Selection Differential
   real(DP) :: S_curve_vals(NR_SC, NR_SCALES + 1, 3)   ! value of S_local curves for various scales
 
 contains
@@ -23,10 +21,6 @@ contains
     write(*, '(a)', advance = "no") "    Altruism kernel... "
     call compute_kernel(fft_kernelAltr, RANGE_SOCIAL)
     print *, "Done."
-    write(*, '(a)', advance = "no") "    Smoothing kernel... "
-    call compute_kernel(fft_smooth_kernel, WIDTH_SMOOTH)
-    print *, "Done."
-    call compute_kernel(fft_kernelAltr, RANGE_SOCIAL)
     write(*, '(a)', advance = "no") "    Multiscale selection kernels... "
     if (STEP_FUNCTION_KERNEL) then
       call compute_kernel_stepfunction(fft_kernelLSD, RANGE_CONTR_SB)
@@ -38,10 +32,11 @@ contains
   end subroutine assemble_kernels
 
   subroutine compute_kernel(fft_kernelA, sigA)
-    complex(DP), intent(out) :: fft_kernelA(N)
+    complex(DP), intent(out) :: fft_kernelA(N,N)
     real(DP), intent(in) :: sigA
+    real(DP) :: kernel1D(N) = 0d0
     real(DP) :: pre
-    integer :: col, hfield
+    integer :: col, hfield, j
     real(DP) :: tmp(2*NR_FIELDS + 1)
 
 
@@ -49,14 +44,19 @@ contains
 
     do col = 1,N
       do hfield = -NR_FIELDS, NR_FIELDS
-        tmp(hfield + NR_FIELDS + 1) = exp(-pre*(real(col - 1 + hfield*N, kind = DP)**2d0))
+        tmp(hfield + NR_FIELDS + 1) = exp(&
+        & -pre*(real(col - 1 + hfield*N, kind = DP)**2d0)&
+        & )
       end do
-      fft_kernelA(col) = pSum(tmp)
+      kernel1D(col) = pSum(tmp)
     end do
 
-    fft_kernelA = RESOLUTION*fft_kernelA/pSumC(fft_kernelA)
+    forall(j=1:N)
+      fft_kernelA(:,j) = cmplx(kernel1D(:) * kernel1D(j), kind = DP)
+    end forall
+    fft_kernelA = (RESOLUTION**2d0)*fft_kernelA/pSumC_2D(fft_kernelA)
 
-    call cfft1f(N, 1, fft_kernelA, N, wsave, lensav, work, lenwrk, ier)
+    call cfft2f(N, N, N, fft_kernelA, wsave, lensav, work, lenwrk, ier)
 
   end subroutine compute_kernel
 
@@ -67,19 +67,19 @@ contains
 
     do i = 1, NR_SCALES
       if (STEP_FUNCTION_KERNEL) then
-        call compute_kernel_stepfunction(fft_kernels( :, i), S_curve_vals(1, i + 1, 1))
+        call compute_kernel_stepfunction(fft_kernels( :, :, i), S_curve_vals (1, i + 1, 1))
       else
-        call compute_kernel(fft_kernels( :, i), S_curve_vals(1, i + 1, 1))
+        call compute_kernel(fft_kernels( :, :, i), S_curve_vals (1, i + 1, 1))
       end if
     end do
 
   end subroutine precompile_all_kernels
 
   subroutine compute_kernel_stepfunction(fft_kernelA, sig)
-    complex(8), intent(out) :: fft_kernelA(N)
+    complex(8), intent(out) :: fft_kernelA(N,N)
     real(8), intent(in) :: sig
-    integer :: i
-    integer :: di
+    integer :: col, row
+    integer :: drow, dcol
 
     if (sig > real(HALF_N, kind = DP)) then
       print *, "ERROR!!"
@@ -88,18 +88,21 @@ contains
     end if
 
 
-    do i = 1,N
-      di = min(i -1, N - i +1)
-      if (di < sig*RESOLUTION + 1) then
-        fft_kernelA(i) = 1d0
-      else
-        fft_kernelA(i) = 0d0
-      end if
+    do col = 1,N
+      do row = 1, N
+        drow = min(row -1, N - row +1)
+        dcol = min(col -1, N - col +1)
+        if (drow**2 + dcol**2 < floor((sig*RESOLUTION)**2d0) + 1) then
+          fft_kernelA(row, col) = 1d0
+        else
+          fft_kernelA(row, col) = 0d0
+        end if
+      end do
     end do
 
-    fft_kernelA = (RESOLUTION)*fft_kernelA/pSumC(fft_kernelA)
+    fft_kernelA = (RESOLUTION**2d0)*fft_kernelA/pSumC_2D(fft_kernelA)
 
-    call cfft1f(N, 1, fft_kernelA, N, wsave, lensav, work, lenwrk, ier)
+    call cfft2f(N, N, N, fft_kernelA, wsave, lensav, work, lenwrk, ier)
 
   end subroutine compute_kernel_stepfunction
 
@@ -135,8 +138,6 @@ contains
     do i = 73, 82
       S_curve_vals (:, i + 1, 1) = 1.4d1 + (1.2d1/3d0)*real(i - 72, kind = DP)*1d-1
     end do
-
-    S_curve_vals(:, :, 1) = 2d0*S_curve_vals(:, :, 1)
 
   end subroutine
 
