@@ -40,6 +40,7 @@ module parameters
 
   logical, parameter :: OUTPUT_COUNT_GLOBAL_LIST = .false.
   logical, parameter :: OUTPUT_ALL_S_CURVES = .false. ! write all S-curves to file
+  logical, parameter :: OUTPUT_MEAN_S_CURVE = .true.  ! write mean of S-curves to file
 
   logical, parameter :: WELL_MIXED = .false. ! use well-mixed conditions.
 

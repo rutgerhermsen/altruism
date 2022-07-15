@@ -49,7 +49,7 @@ program altruism_default_1D
 
     ! update density etc. of current ("old") state
     call update_quantities()
-    
+
     ! perform collective-level analysis, at certain times
     call consider_collective_analysis(field, o_list, o_stats, t)
 
@@ -122,6 +122,9 @@ program altruism_default_1D
     if (OUTPUT_ALL_S_CURVES) then
       call output_S_curves()
     end if
+    if (OUTPUT_MEAN_S_CURVE) then
+      call output_S_curve_mean()
+    end if
   end if
 
   call cleanup_fft()
@@ -137,7 +140,6 @@ contains
     call update_K_altr()
     ! updates the growth rates
     call update_growth_rates(o_list, o_stats, field, py)
-    ! update the mean phenotype
     o_stats(py)%mean_p = &
     & pSum(o_list(1:o_stats(py)%n, py)%p) / real(o_stats(py)%n, kind = DP)
   end subroutine update_quantities
@@ -234,7 +236,6 @@ contains
     integer, intent(inout) :: rep
     complex(DP) :: autocorr(N)
     real(DP) :: g_of_r(0:HALF_N)
-
 
     if ( t >= rep*REPORT_INTERVAL) then
       rep = rep + 1
