@@ -45,7 +45,7 @@ contains
     do i = 2, (NR_SCALES + 1)
       call compute_S_split(i - 1, fft_occ_field, fft_p_field, fft_w_field, S_curve_vals(nr_SC_C, i, 2:3), o_stats)
     end do
-
+    
   end subroutine compute_S_curve
 
   real(DP) function compute_S_interlocal_0(field, o_stats) result (s0)
@@ -103,7 +103,7 @@ contains
     & pack( &
     & real((p_est_unnorm-d_est*o_stats%mean_p)/d_est, kind = DP), &
     & mymask) &
-    & )/real(o_stats%n, kind = DP)
+    & )/(real(o_stats%n, kind = DP)*RESOLUTION**2)
     ! s local
     ssplit(2) = S - ssplit(1)
 
@@ -217,6 +217,11 @@ contains
     end do
     close(unit=13)
 
+  end subroutine output_S_curves
+  
+  subroutine output_S_curve_mean()
+    integer :: i
+
     open(unit=13, file="S_curves_mean.txt", form="formatted", action="write", status="replace")
     write(13, "(g0)") "scale, mean S_local, mean S_interlocal, sd S_(inter)local, mean S_interlocal + mean S_local, S_mean"
     do i=1,(NR_SCALES + 1)
@@ -225,6 +230,6 @@ contains
     end do
     close(unit=13)
 
-  end subroutine output_S_curves
+  end subroutine output_S_curve_mean
 
 end module multiscale

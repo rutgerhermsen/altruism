@@ -108,35 +108,25 @@ contains
 
   subroutine choose_s_curve_vals()
     integer :: i
+
     !routine that sets the scales goes here.
 
     S_curve_vals(:, 1, 1) = 0d0
 
-    S_curve_vals(:, 2, 1) = (1d0/3d0)*1d-1
-    S_curve_vals(:, 3, 1) = (2d0/3d0)*1d-1
-
-    do i = 3, 9
-      S_curve_vals (:, i + 1, 1) = 1d-1 + (2d0/3d0)*real(i - 3, kind = DP)*1d-1
+    do i = 1, 9
+      S_curve_vals (:, i + 1, 1) = real(i, kind = DP)/1d1
     end do
 
-    do i = 10, 14
-      S_curve_vals (:, i + 1, 1) = 5d-1 + 1d0*real(i - 9, kind = DP)*1d-1
+    do i = 10, 21
+      S_curve_vals (:, i + 1, 1) = 1d0 + real(i - 10, kind = DP)/3d0
     end do
 
-    do i = 15, 32
-      S_curve_vals (:, i + 1, 1) = 1d0 + (5d0/3d0)*real(i - 14, kind = DP)*1d-1
+    do i = 22, 31
+      S_curve_vals (:, i + 1, 1) = 5d0 + real(i - 22, kind = DP)/2d0
     end do
 
-    do i = 33, 52
-      S_curve_vals (:, i + 1, 1) = 4d0 + (6d0/3d0)*real(i - 32, kind = DP)*1d-1
-    end do
-
-    do i = 53, 72
-      S_curve_vals (:, i + 1, 1) = 8d0 + (9d0/3d0)*real(i - 52, kind = DP)*1d-1
-    end do
-
-    do i = 73, 82
-      S_curve_vals (:, i + 1, 1) = 1.4d1 + (1.2d1/3d0)*real(i - 72, kind = DP)*1d-1
+    do i = 32, 42
+      S_curve_vals (:, i + 1, 1) = 1d1 + real(i - 32, kind = DP)*1d0
     end do
 
   end subroutine

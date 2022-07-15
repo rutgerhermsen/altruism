@@ -118,6 +118,9 @@ program altruism_default_2D
     if (OUTPUT_ALL_S_CURVES) then
       call output_S_curves()
     end if
+    if (OUTPUT_MEAN_S_CURVE) then
+      call output_S_curve_mean()
+    end if
   end if
 
   call cleanup_fft()
@@ -139,6 +142,10 @@ contains
 
   ! S_curves are calculated only at certain times
   subroutine consider_S_curve()
+    integer :: i
+    logical :: exis
+    character(len=10) :: fileRep
+    
     if (&
     & NR_AV > 0 .and. t >=  (T_MAX - NR_AV) &
     & .and. (modulo(T_MAX - t - 1, SC_IN) == 0)&
@@ -146,6 +153,31 @@ contains
     print *, "# Start calculating an S-curve at time", t
     call update_w_field()
     call compute_S_curve(field(py), o_stats(py))
+    if (OUTPUT_SELECTION_LIST) then
+        inquire(file="selection_Hilje.txt", exist=exis)
+        if (exis) then
+            open(12, file="selection_Hilje.txt", status="old", position="append", action="write")
+        else
+            open(12, file="selection_Hilje.txt", status="new", action="write")
+            write(12, "(*(g0))", advance = "no") &
+                & "time", TAB, "Stot"
+            do i = 1, (NR_SCALES + 1)
+                write (fileRep, "(F10.4)") S_curve_vals(nr_SC_C, i, 1)
+                write(12, "(*(g0))", advance = "no") &
+                & TAB, "Slocal_"//adjustl(trim(fileRep)), TAB,  &
+                & "Sinterlocal_"//adjustl(trim(fileRep))
+            end do
+            write(12, *)
+        end if
+        write(12, "(E23.16, a, E23.16)", advance = "no") &
+                & t*DT, TAB, S
+        do i = 1, (NR_SCALES + 1)
+            write(12, "(a, E23.16, a, E23.16)", advance = "no") &
+                & TAB, S_curve_vals(nr_SC_C, i, 3), TAB,  S_curve_vals(nr_SC_C, i, 2)
+        end do
+        write(12, *)
+        close(unit=12)
+    end if
   end if
 end subroutine consider_S_curve
 
