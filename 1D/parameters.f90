@@ -33,6 +33,7 @@ module parameters
   logical, parameter :: OUTPUT_COLL = .true. ! output the properties of collectives
   logical, parameter :: OUTPUT_COLL_DEMOGRAPHICS = .true. ! output the demographic events at the level of collectives
   logical, parameter :: OUTPUT_COLL_LIST_TIME_LINES = .true. ! output line segments that trace the collectives in space-time
+  logical, parameter :: OUTPUT_HAMILTON = .true. ! calculate cost, benefit, relatedness according to Hamilton's rule
 
   logical, parameter :: OUTPUT_HISTOGRAMS = .false.   ! periodically output a histogram of phenotypes?
   integer, parameter :: HIST_NR_BINS = 400 ! number of bins of the histogram

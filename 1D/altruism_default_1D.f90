@@ -12,6 +12,7 @@ program altruism_default_1D
   use g_of_r          ! ... routines to calculate radial distribution function
   use state           ! ... structures storing representations of the state of the simulation
   use price           ! ... routines for calculating terms of the Price equation
+  use hamilton        ! ... routines for calculating terms and factors of Hamilton's rule
   use multiscale      ! ... routines for calculating multiscale selection
   use collectives     ! ... routines for calculating multilevel selection (MLS1 and MLS2)
 
@@ -95,6 +96,10 @@ program altruism_default_1D
     ! calculate directional selection, purifying selection, drift, transmission
     ! using the Price Equation.
     call calculate_price(t)
+
+    if (OUTPUT_HAMILTON .and. t > 0) then
+      call calculate_hamilton(t)
+    end if
 
     ! calculate local and interlocal selection for chosen scales,
     ! at certain times only
@@ -340,7 +345,15 @@ contains
       & purifying selection (alternative definition), &
       & selection differential S (cumulative), &
       & transmission (cumulative), drift (cumulative), &
-      & purifying selection (cumulative)"
+      & purifying selection (cumulative), &
+      & cost, rolling mean of cost, benefit, rolling mean of benefit, &
+      & relatedness, rolling mean of relateness, &
+      & cost (cumulative), benefit (cumulative), relatedness (cumulative), &
+      & contribution to selection of costs, rolling mean of contribution to selection of costs, &
+      & contribution to selection of costs (cumulative), &
+      & contribution to selection of benfits, rolling mean of contribution to selection of benfits, &
+      & contribution to selection of benfits (cumulative), &
+      & contribution to selection of costs + benefits"
     end if
     write(12, "(*(g0))") &
     & t, ', ', real(t, kind = DP)*DT, ', ', &
@@ -358,7 +371,21 @@ contains
     & S_pur, ', ', &
     & pSum(S_pur_r_mean)/real(min(MEAN_INTERVAL, t + 1), kind = DP), ', ', &
     & S_pur_alt, ', ', S_cum, ', ', transmission_cum, ', ', &
-    & drift_cum,  ', ', S_pur_cum
+    & drift_cum,  ', ', S_pur_cum, ', ', &
+    & coef_cost, ', ', &
+    & pSum(coef_cost_r_mean)/real(min(MEAN_INTERVAL, t + 1), kind = DP), ', ', &
+    & coef_ben, ', ', &
+    & pSum(coef_ben_r_mean)/real(min(MEAN_INTERVAL, t + 1), kind = DP), ', ', &
+    & relatedness, ', ', &
+    & pSum(relatedness_r_mean)/real(min(MEAN_INTERVAL, t + 1), kind = DP), ', ', &
+    & coef_cost_cum, ', ', coef_ben_cum, ', ', relatedness_cum, ', ', &
+    & effect_cost, ', ', &
+    & pSum(effect_cost_r_mean)/real(min(MEAN_INTERVAL, t + 1), kind = DP), ', ', &
+    & effect_cost_cum, ', ', &
+    & effect_rel_ben, ', ', &
+    & pSum(effect_rel_ben_r_mean)/real(min(MEAN_INTERVAL, t + 1), kind = DP), ', ', &
+    & effect_rel_ben_cum, ', ', &
+    & effect_cost + effect_rel_ben
     close(unit=12)
 
     ! if desired, outputs a list with properties of each organism

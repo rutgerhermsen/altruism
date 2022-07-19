@@ -104,7 +104,7 @@ contains
 
     ! s interlocal
     ssplit(1) = pSum(pack(real(w_est_unnorm- d_est*o_stats%mean_w, kind = DP), mymask) * &
-    & pack(real((p_est_unnorm-d_est*o_stats%mean_p)/d_est, kind = DP), mymask))/ * &
+    & pack(real((p_est_unnorm-d_est*o_stats%mean_p)/d_est, kind = DP), mymask)) / &
     & (real(o_stats%n, kind = DP)*RESOLUTION)
     ! s local
     ssplit(2) = S - ssplit(1)
@@ -219,10 +219,10 @@ contains
     close(unit=13)
 
   end subroutine output_S_curves
-  
+
   subroutine output_S_curve_mean()
     integer :: i
-    
+
     open(unit=13, file="S_curves_mean.txt", form="formatted", action="write", status="replace")
     write(13, "(g0)") "scale, mean S_local, mean S_interlocal, sd S_(inter)local, mean S_interlocal + mean S_local, S_mean"
     do i=1,(NR_SCALES + 1)
@@ -231,6 +231,6 @@ contains
     end do
     close(unit=13)
 
-  end subroutine output_S_curves_mean
+  end subroutine output_S_curve_mean
 
 end module multiscale

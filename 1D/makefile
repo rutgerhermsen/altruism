@@ -1,13 +1,13 @@
 # Start of the makefile
 # Defining variables
-objects = pairwise.o ziggurat.o fftpack5.1d.o parameters.o data_structures.o utils.o shorthands.o fft.o kernels.o g_of_r.o state.o price.o multiscale.o collectives.o altruism_sweep_1D.o
+objects = pairwise.o ziggurat.o fftpack5.1d.o parameters.o data_structures.o utils.o shorthands.o fft.o kernels.o g_of_r.o state.o price.o hamilton.o multiscale.o collectives.o altruism_default_1D.o
 f90comp = gfortran
 switch = -O3 -march=native -Wall -Wextra
 # Makefile
 altr.out: $(objects)
 	$(f90comp) -o altr.out $(switch) $(objects)
-altruism_sweep_1D.o: pairwise.o ziggurat.o fftpack5.1d.o parameters.o data_structures.o utils.o shorthands.o fft.o kernels.o g_of_r.o state.o price.o multiscale.o collectives.o altruism_sweep_1D.f90
-	$(f90comp) -c $(switch) altruism_sweep_1D.f90
+altruism_default_1D.o: pairwise.o ziggurat.o fftpack5.1d.o parameters.o data_structures.o utils.o shorthands.o fft.o kernels.o g_of_r.o state.o price.o multiscale.o collectives.o altruism_default_1D.f90
+	$(f90comp) -c $(switch) altruism_default_1D.f90
 collectives.mod: collectives.o collectives.f90
 	$(f90comp) -c $(switch) collectives.f90
 collectives.o: parameters.o shorthands.o data_structures.o fft.o kernels.o state.o utils.o collectives.f90
@@ -52,6 +52,10 @@ parameters.mod: parameters.o parameters.f90
 	$(f90comp) -c $(switch) parameters.f90
 parameters.o: parameters.f90
 	$(f90comp) -c $(switch) parameters.f90
+hamilton.mod: hamilton.o hamilton.f90
+	$(f90comp) -c $(switch) hamilton.f90
+hamilton.o: parameters.o pairwise.o data_structures.o state.o utils.o shorthands.o hamilton.f90
+	$(f90comp) -c $(switch) hamilton.f90
 fftpack5.1d.mod: fftpack5.1d.o fftpack5.1d.f90
 	$(f90comp) -c $(switch) fftpack5.1d.f90
 fftpack5.1d.o: fftpack5.1d.f90

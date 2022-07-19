@@ -16,6 +16,7 @@ module shorthands
   real(DP), parameter :: ANALYSIS_INTERVAL_REAL = real(ANALYSIS_INTERVAL, kind = DP)
   real(DP), parameter :: N_REAL = real(N, kind = DP)
   character(len=1), parameter :: TAB = achar(9)
+  real(DP), parameter :: PI = 4.D0*DATAN(1.D0)
 
 
 contains
