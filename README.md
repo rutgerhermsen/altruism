@@ -13,7 +13,7 @@ This document contains a brief description of the code provided in this reposito
 The code implements a simulation of an agent-based model of the evolution of altruism and analyzes the results in various ways. This code was used to obtain simulation results presented in the following two manuscripts:
 
 * Doekes, Hilje .M. and Rutger Hermsen  *Multiscale selection in spatially structured population*, in preparation, 2021.
-* Hermsen, Rutger.  *Emergent multilevel selection in a simple model of the evolution of altruism*, in preparation, 2021.
+* Hermsen, Rutger.  *Emergent multilevel selection in a simple model of the evolution of altruism*, PLOS Computational Biology 18, no. 10 (October 25, 2022): e1010612. https://doi.org/10.1371/journal.pcbi.1010612.
 
 Detailed descriptions of the model and methods can be found in these texts. If despite these sources and the current document any questions remain, never hesitate to send us an email.
 
