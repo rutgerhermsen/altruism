@@ -25,11 +25,11 @@ Two versions of the program are included: one simulates the dynamics of organism
 
 ### The 2D version
 
-The folder `2D` contains code for the 2D model. In this version, organisms live in a two-dimensional space with periodic boundary conditions. Under the right parameter regime, once a minimal level of altruism has evolved the organisms spontaneously form a hexagonal pattern of colonies that themselves act as replicators (Hermsen, 2021).
+The folder `2D` contains code for the 2D model. In this version, organisms live in a two-dimensional space with periodic boundary conditions. Under the right parameter regime, once a minimal level of altruism has evolved the organisms spontaneously form a hexagonal pattern of colonies that themselves act as replicators (Hermsen, 2022).
 
 ### The 1D version
 
-The folder `1D`  contains the code for the 1D model. In this version, organisms live in a one-dimensional space, again with periodic boundary conditions. The behavior in 1D is similar as in 2D case: colonies form at regular distances. Simulations of the 1D model are faster than those of the 2D model and in 1D the colonies can be identified more easily. This version of the model was therefore used for detailed analysis (Hermsen, 2021) and hence its code is more elaborate.
+The folder `1D`  contains the code for the 1D model. In this version, organisms live in a one-dimensional space, again with periodic boundary conditions. The behavior in 1D is similar as in 2D case: colonies form at regular distances. Simulations of the 1D model are faster than those of the 2D model and in 1D the colonies can be identified more easily. This version of the model was therefore used for detailed analysis (Hermsen, 2022) and hence its code is more elaborate.
 
 ## Compilation
 
@@ -48,7 +48,7 @@ All code was written by us, except for two modules:
 
 ## What does the program do?
 
-The program simulates the basic evolutionary dynamics as presented in the papers Hermsen *et al* (2021) and Doekes et al (2021). In addition, it performs analyses on the resulting dynamics, writing the results to comma-separated `*.txt` files (see section [Output](#output)). There is no graphical interface.
+The program simulates the basic evolutionary dynamics as presented in the papers Hermsen *et al* (2022) and Doekes et al (2021). In addition, it performs analyses on the resulting dynamics, writing the results to comma-separated `*.txt` files (see section [Output](#output)). There is no graphical interface.
 
 ### Analyses implemented in both the 1D and the 2D version
 
@@ -177,7 +177,7 @@ Note that, if many of the output options are switched on (`.true.`) and/or the `
 
 * Damuth, J., and I. L. Heisler  *Alternative Formulations of Multilevel Selection*, Biology and Philosophy 3, no. 4 (October 1, 1988): 407–30.
 * Doekes, H.M. & R. Hermsen  *Multiscale selection in spatially structured population*, in preparation, 2021.
-* Hermsen, R..  *Emergent group selection in a simple model of the evolution of altruism*, in preparation, 2021.
+* Hermsen, R. *Emergent multilevel selection in a simple model of the evolution of altruism*, PLOS Computational Biology 18, no. 10, 2022.
 * Marsaglia, G. & W.W. Tsang. *The ziggurat method for generating random variables* , J. Statist. Software, v5(8), 2000.
 * Marshall, J.A.R. *Social Evolution and Inclusive Fitness Theory: An Introduction*, Princeton University Press, 2015. 
 * Rice, S.H.  *Evolutionary Theory: Mathematical and Conceptual Foundations*, Sinauer Associates, 2004.
