@@ -4,15 +4,15 @@
 
 # Description of the simulation code, 1D and 2D
 
-Rutger Hermsen, *r.hermsen@uu.nl* (2021)
+Rutger Hermsen, *r.hermsen@uu.nl* (last edits: April 5, 2024)
 
 ## Introduction
 
-This document contains a brief description of the code provided in this repository. 
+This document contains a brief description of the code provided in this bundle. 
 
 The code implements a simulation of an agent-based model of the evolution of altruism and analyzes the results in various ways. This code was used to obtain simulation results presented in the following two manuscripts:
 
-* Doekes, Hilje .M. and Rutger Hermsen  *Multiscale selection in spatially structured population*, in preparation, 2021.
+* Doekes, Hilje .M. and Rutger Hermsen  *Quantifying selection at all spatial scales*, to appear in Proceedings of the Royal Society B (2024).
 * Hermsen, Rutger.  *Emergent multilevel selection in a simple model of the evolution of altruism*, PLOS Computational Biology 18, no. 10 (October 25, 2022): e1010612. https://doi.org/10.1371/journal.pcbi.1010612.
 
 Detailed descriptions of the model and methods can be found in these texts. If despite these sources and the current document any questions remain, never hesitate to send us an email.
@@ -48,7 +48,7 @@ All code was written by us, except for two modules:
 
 ## What does the program do?
 
-The program simulates the basic evolutionary dynamics as presented in the papers Hermsen *et al* (2022) and Doekes et al (2021). In addition, it performs analyses on the resulting dynamics, writing the results to comma-separated `*.txt` files (see section [Output](#output)). There is no graphical interface.
+The program simulates the basic evolutionary dynamics as presented in the papers Hermsen *et al* (2022) and Doekes et al (2024). In addition, it performs analyses on the resulting dynamics, writing the results to comma-separated `*.txt` files (see section [Output](#output)). There is no graphical interface.
 
 ### Analyses implemented in both the 1D and the 2D version
 
@@ -86,11 +86,11 @@ In both the 1D and the 2D version, the population spontaneously organizes into c
 
 #### Multi*scale* selection
 
-The program can additionally perform the multi*scale* selection analysis as described by Doekes *et al* (2021). The scales $\sigma$ used for this analysis are hard-coded in the module `kernels.f90`, function `choose_s_curve_vals()`. The total number of scales defined there has to be consistent with the parameter `NR_SCALES` defined in `parameters.f90`. The code calculates $S_\mathrm{local}$ and $S_\mathrm{interlocal}$ for each scale; we here refer to the results as $S$-curves. 
+The program can additionally perform the multi*scale* selection analysis as described by Doekes *et al* (2024). The scales $\sigma$ used for this analysis are hard-coded in the module `kernels.f90`, function `choose_s_curve_vals()`. The total number of scales defined there has to be consistent with the parameter `NR_SCALES` defined in `parameters.f90`. The code calculates $S_\mathrm{local}$ and $S_\mathrm{interlocal}$ for each scale; we here refer to the results as $S$-curves. 
 
 For our purposes, it was sufficient to calculate $S$-curves only after the evolutionary dynamics had equilibrated and the mean phenotype no longer changed systematically. The timepoints at which $S$-curves are calculated are determined by two parameters in `parameters.f90`: calculation of $S$-curves starts no earlier than `NR_AV` timesteps before the end of the simulation, and is then performed once every `SC_IN` timesteps, but in such a way that the last analysis is performed right at the end of the simulation. The program also calculates the mean and standard deviation of all $S$-curves.
 
-The multiscale selection analysis relies on the Local Selection Differential (LSD), which in turn depends on a kernel function (see Doekes *et al* (2021). The program supports a choice between two kernel functions: a step function or a normal distribution. To choose the normal distribution, set `STEP_FUNCTION_KERNEL` to `.false.` in `parameters.f90`. 
+The multiscale selection analysis relies on the Local Selection Differential (LSD), which in turn depends on a kernel function (see Doekes *et al* (2024). The program supports a choice between two kernel functions: a step function or a normal distribution. To choose the normal distribution, set `STEP_FUNCTION_KERNEL` to `.false.` in `parameters.f90`. 
 
 ### Analyses implemented exclusively in the 1D version
 
@@ -176,7 +176,7 @@ Note that, if many of the output options are switched on (`.true.`) and/or the `
  ## References
 
 * Damuth, J., and I. L. Heisler  *Alternative Formulations of Multilevel Selection*, Biology and Philosophy 3, no. 4 (October 1, 1988): 407–30.
-* Doekes, H.M. & R. Hermsen  *Multiscale selection in spatially structured population*, in preparation, 2021.
+* Doekes, Hilje .M. and Rutger Hermsen  *Quantifying selection at all spatial scales*, to appear in Proceedings of the Royal Society B (2024).
 * Hermsen, R. *Emergent multilevel selection in a simple model of the evolution of altruism*, PLOS Computational Biology 18, no. 10, 2022.
 * Marsaglia, G. & W.W. Tsang. *The ziggurat method for generating random variables* , J. Statist. Software, v5(8), 2000.
 * Marshall, J.A.R. *Social Evolution and Inclusive Fitness Theory: An Introduction*, Princeton University Press, 2015. 
